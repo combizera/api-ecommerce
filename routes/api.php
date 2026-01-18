@@ -8,5 +8,14 @@ Route::prefix('v1')->group(function () {
         return ['message' => 'Hello, API!'];
     });
 
-    Route::post('/login', [TokenController::class, 'store'])->name('auth.store');
+    Route::middleware('guest')->group(function() {
+        Route::post('/login', [TokenController::class, 'store'])->name('auth.store');
+    });
+
+    Route::middleware('auth:sanctum')->group(function() {
+        Route::post('/logout', [TokenController::class, 'destroy'])->name('auth.destroy');
+        Route::post('/logout-all', [TokenController::class, 'destroyAll'])->name('auth.destroyAll');
+
+        //
+    });
 });

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TokenController extends Controller
 {
-    public function store(LoginRequest $request)
+    public function store(LoginRequest $request): JsonResponse
     {
         $credentials = $request->validated();
 
@@ -28,5 +28,25 @@ class TokenController extends Controller
             'message' => 'Login successful',
             'token'   => $token,
         ], 201);
+    }
+
+    public function destroy(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete;
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Token revoked successfully.',
+        ], 200);
+    }
+
+    public function destroyAll(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'All tokens revoked successfully.',
+        ], 200);
     }
 }
